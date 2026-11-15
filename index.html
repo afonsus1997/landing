@@ -203,6 +203,65 @@
       text-overflow: ellipsis;
     }
 
+    /* Contact form */
+    .contact summary { list-style: none; cursor: pointer; }
+    .contact summary::-webkit-details-marker { display: none; }
+    .contact[open] summary { border-color: var(--fg); }
+
+    .contact-form {
+      display: grid;
+      gap: 0.9rem;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-top: none;
+    }
+
+    .contact-form label {
+      display: grid;
+      gap: 0.3rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form button {
+      font: inherit;
+      color: var(--fg);
+      background: none;
+      border: 1px solid var(--line);
+      padding: 0.5rem 0.6rem;
+      border-radius: 0;
+    }
+
+    .contact-form textarea { resize: vertical; }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus,
+    .contact-form button:focus-visible {
+      outline: none;
+      border-color: var(--fg);
+    }
+
+    .contact-form .botcheck { display: none; }
+
+    .contact-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .contact-form button {
+      cursor: pointer;
+      padding: 0.5rem 1.25rem;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .contact-form button:hover { background: var(--hover); border-color: var(--fg); }
+    .contact-form button:disabled { opacity: 0.5; cursor: default; }
+
+    .contact-status { color: var(--muted); font-size: 0.85rem; }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation: none !important;
@@ -407,6 +466,36 @@
       birdwatching, 3D printing and self-hosting. He studies music theory and
       plays jazz piano.
     </p>
+
+    <h2>Contact</h2>
+    <details class="contact">
+      <summary class="card">
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-8,144H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></svg>
+        <span class="text">
+          <span class="title">Send me a message</span>
+          <span class="desc">Opens a short form</span>
+        </span>
+      </summary>
+      <form class="contact-form" novalidate>
+        <input type="hidden" name="subject" value="New message from afonsomuralha.com">
+        <input type="hidden" name="from_name" value="afonsomuralha.com">
+        <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label>Name
+          <input type="text" name="name" required autocomplete="name" maxlength="100">
+        </label>
+        <label>Email
+          <input type="email" name="email" required autocomplete="email" maxlength="200">
+        </label>
+        <label>Message
+          <textarea name="message" required rows="5" maxlength="5000"></textarea>
+        </label>
+        <div class="captcha"></div>
+        <div class="contact-actions">
+          <button type="submit">Send</button>
+          <span class="contact-status" role="status"></span>
+        </div>
+      </form>
+    </details>
   </main>
   <script>
     // SUB/WAVE player: nothing loads until the play button is pressed.
@@ -465,6 +554,62 @@
 
       refresh();
       poll();
+    })();
+  </script>
+  <script>
+    // Contact form: sent through Web3Forms, so the address never appears on
+    // the page. hCaptcha only loads once the form is opened.
+    (function () {
+      var ACCESS_KEY = "fc8cb902-cf2a-4f23-acf9-15d35db22ec0";
+      var HCAPTCHA_SITEKEY = "50b2fe65-b00b-4b9e-ad62-3ba471098be2"; // Web3Forms free-plan key
+
+      var details = document.querySelector(".contact");
+      var form = document.querySelector(".contact-form");
+      var box = form.querySelector(".captcha");
+      var status = form.querySelector(".contact-status");
+      var button = form.querySelector("button");
+      var widget = null;
+
+      function say(text) { status.textContent = text; }
+
+      window.onHcaptchaLoad = function () {
+        widget = hcaptcha.render(box, { sitekey: HCAPTCHA_SITEKEY, theme: "dark" });
+      };
+
+      details.addEventListener("toggle", function () {
+        if (!details.open || document.querySelector("script[data-hcaptcha]")) return;
+        var sc = document.createElement("script");
+        sc.src = "https://js.hcaptcha.com/1/api.js?render=explicit&onload=onHcaptchaLoad";
+        sc.async = true;
+        sc.setAttribute("data-hcaptcha", "");
+        sc.onerror = function () { say("Couldn't load the bot check. Please try again later."); };
+        document.head.appendChild(sc);
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        var data = new FormData(form);
+        var token = widget !== null ? hcaptcha.getResponse(widget) : "";
+        if (!token) { say("Please complete the bot check."); return; }
+        data.set("h-captcha-response", token);
+        data.set("access_key", ACCESS_KEY);
+
+        button.disabled = true;
+        say("Sending\u2026");
+        fetch("https://api.web3forms.com/submit", { method: "POST", body: data })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (!res.success) throw new Error(res.message);
+            form.reset();
+            say("Sent, thanks! I'll get back to you.");
+          })
+          .catch(function () { say("Something went wrong. Please try again."); })
+          .then(function () {
+            button.disabled = false;
+            if (widget !== null) hcaptcha.reset(widget);
+          });
+      });
     })();
   </script>
 </body>
