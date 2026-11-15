@@ -11,6 +11,7 @@
       --bg: #1a150e;
       --fg: #f2d39a;
       --muted: #b39d74;
+      --line: #4a3f2c;
     }
 
     * { box-sizing: border-box; }
@@ -55,27 +56,33 @@
 
     p { margin: 0 0 1rem; }
 
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
     }
 
-    li { margin: 0.25rem 0; }
-
-    li::before {
-      content: "> ";
-      color: var(--muted);
-    }
-
-    a {
+    .card {
+      display: block;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--line);
       color: var(--fg);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-thickness: 1px;
+      text-decoration: none;
     }
 
-    a:hover { color: var(--bg); background: var(--fg); text-decoration: none; }
+    .card:hover { border-color: var(--fg); }
+
+    .card .title { display: block; }
+
+    .card .desc {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 30rem) {
+      .cards { grid-template-columns: 1fr; }
+    }
 
   </style>
 </head>
@@ -86,13 +93,28 @@
     <h1>Afonso Muralha</h1>
 
     <h2>Links</h2>
-    <ul>
-      <li><a href="https://github.com/afonsus1997">GitHub</a></li>
-      <li><a href="https://raw.githubusercontent.com/afonsus1997/CV/main/rendercv_output/Afonso_Muralha_CV.pdf">CV</a></li>
-      <li><a href="https://birds.afonsomuralha.com/">Birdwatching</a></li>
-      <li><a href="https://astro.afonsomuralha.com/">Astrophotography</a></li>
-      <li><a href="https://rewind.afonsomuralha.com/">Music reviews</a></li>
-    </ul>
+    <nav class="cards">
+      <a class="card" href="https://github.com/afonsus1997">
+        <span class="title">GitHub</span>
+        <span class="desc">Projects and hardware</span>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/afonsus1997/CV/main/rendercv_output/Afonso_Muralha_CV.pdf">
+        <span class="title">CV</span>
+        <span class="desc">PDF</span>
+      </a>
+      <a class="card" href="https://birds.afonsomuralha.com/">
+        <span class="title">Birdwatching</span>
+        <span class="desc">birds.afonsomuralha.com</span>
+      </a>
+      <a class="card" href="https://astro.afonsomuralha.com/">
+        <span class="title">Astrophotography</span>
+        <span class="desc">astro.afonsomuralha.com</span>
+      </a>
+      <a class="card" href="https://rewind.afonsomuralha.com/">
+        <span class="title">Music reviews</span>
+        <span class="desc">rewind.afonsomuralha.com</span>
+      </a>
+    </nav>
 
     <h2>About</h2>
     <p>
