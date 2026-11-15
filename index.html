@@ -579,7 +579,7 @@
       details.addEventListener("toggle", function () {
         if (!details.open || document.querySelector("script[data-hcaptcha]")) return;
         var sc = document.createElement("script");
-        sc.src = "https://js.hcaptcha.com/1/api.js?render=explicit&onload=onHcaptchaLoad";
+        sc.src = "https://js.hcaptcha.com/1/api.js?render=explicit&recaptchacompat=off&onload=onHcaptchaLoad";
         sc.async = true;
         sc.setAttribute("data-hcaptcha", "");
         sc.onerror = function () { say("Couldn't load the bot check. Please try again later."); };
@@ -593,18 +593,28 @@
         var token = widget !== null ? hcaptcha.getResponse(widget) : "";
         if (!token) { say("Please complete the bot check."); return; }
         data.set("h-captcha-response", token);
+        data.delete("g-recaptcha-response"); // Web3Forms would treat this as reCAPTCHA (a paid feature)
         data.set("access_key", ACCESS_KEY);
 
         button.disabled = true;
         say("Sending\u2026");
         fetch("https://api.web3forms.com/submit", { method: "POST", body: data })
-          .then(function (r) { return r.json(); })
+          .then(function (r) {
+            return r.json().catch(function () { return { success: false, message: "HTTP " + r.status }; });
+          })
           .then(function (res) {
-            if (!res.success) throw new Error(res.message);
+            if (!res.success) {
+              console.error("Web3Forms:", res);
+              say("Couldn't send: " + (res.message || "unknown error"));
+              return;
+            }
             form.reset();
             say("Sent, thanks! I'll get back to you.");
           })
-          .catch(function () { say("Something went wrong. Please try again."); })
+          .catch(function (err) {
+            console.error("Web3Forms request failed:", err);
+            say("Couldn't reach the mail service. Please try again later.");
+          })
           .then(function () {
             button.disabled = false;
             if (widget !== null) hcaptcha.reset(widget);
