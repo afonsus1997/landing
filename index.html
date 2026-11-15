@@ -6,6 +6,7 @@
   <title>Afonso Muralha</title>
   <meta name="description" content="Afonso Muralha, electronics engineer based in Lisbon.">
   <link rel="icon" type="image/png" href="logo.png">
+  <!-- Icons: Phosphor Icons (MIT), https://phosphoricons.com -->
   <style>
     :root {
       --bg: #1a150e;
@@ -28,7 +29,7 @@
     }
 
     main {
-      max-width: 36rem;
+      max-width: 40rem;
       margin: 0 auto;
       padding: 4rem 1.5rem;
     }
@@ -63,7 +64,9 @@
     }
 
     .card {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
       padding: 0.9rem 1rem;
       border: 1px solid var(--line);
       color: var(--fg);
@@ -72,12 +75,21 @@
 
     .card:hover { border-color: var(--fg); }
 
+    .card .icon {
+      flex: none;
+      width: 28px;
+      height: 28px;
+    }
+
+    .card .text { min-width: 0; }
+
     .card .title { display: block; }
 
     .card .desc {
       display: block;
       color: var(--muted);
       font-size: 0.85rem;
+      overflow-wrap: anywhere;
     }
 
     @media (max-width: 30rem) {
@@ -95,24 +107,39 @@
     <h2>Links</h2>
     <nav class="cards">
       <a class="card" href="https://github.com/afonsus1997">
-        <span class="title">GitHub</span>
-        <span class="desc">Projects and hardware</span>
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,1-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z"/></svg>
+        <span class="text">
+          <span class="title">GitHub</span>
+          <span class="desc">Projects and hardware</span>
+        </span>
       </a>
       <a class="card" href="https://raw.githubusercontent.com/afonsus1997/CV/main/rendercv_output/Afonso_Muralha_CV.pdf">
-        <span class="title">CV</span>
-        <span class="desc">PDF</span>
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,176H96a8,8,0,0,1,0-16h64a8,8,0,0,1,0,16Zm0-32H96a8,8,0,0,1,0-16h64a8,8,0,0,1,0,16Zm-8-56V44l44,44Z"/></svg>
+        <span class="text">
+          <span class="title">CV</span>
+          <span class="desc">PDF</span>
+        </span>
       </a>
       <a class="card" href="https://birds.afonsomuralha.com/">
-        <span class="title">Birdwatching</span>
-        <span class="desc">birds.afonsomuralha.com</span>
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M237.22,151.9l0-.1a1.42,1.42,0,0,0-.07-.22,48.46,48.46,0,0,0-2.31-5.3L193.27,51.8a8,8,0,0,0-1.67-2.44,32,32,0,0,0-45.26,0A8,8,0,0,0,144,55V80H112V55a8,8,0,0,0-2.34-5.66,32,32,0,0,0-45.26,0,8,8,0,0,0-1.67,2.44L21.2,146.28a48.46,48.46,0,0,0-2.31,5.3,1.72,1.72,0,0,0-.07.21s0,.08,0,.11a48,48,0,0,0,90.32,32.51,47.49,47.49,0,0,0,2.9-16.59V96h32v71.83a47.49,47.49,0,0,0,2.9,16.59,48,48,0,0,0,90.32-32.51Zm-143.15,27a32,32,0,0,1-60.2-21.71l1.81-4.13A32,32,0,0,1,96,167.88V168h0A32,32,0,0,1,94.07,178.94ZM203,198.07A32,32,0,0,1,160,168h0v-.11a32,32,0,0,1,60.32-14.78l1.81,4.13A32,32,0,0,1,203,198.07Z"/></svg>
+        <span class="text">
+          <span class="title">Birdwatching</span>
+          <span class="desc">birds.afonsomuralha.com</span>
+        </span>
       </a>
       <a class="card" href="https://astro.afonsomuralha.com/">
-        <span class="title">Astrophotography</span>
-        <span class="desc">astro.afonsomuralha.com</span>
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.46,16.46,0,0,1,9.37,28.86Z"/></svg>
+        <span class="text">
+          <span class="title">Astrophotography</span>
+          <span class="desc">astro.afonsomuralha.com</span>
+        </span>
       </a>
       <a class="card" href="https://rewind.afonsomuralha.com/">
-        <span class="title">Music reviews</span>
-        <span class="desc">rewind.afonsomuralha.com</span>
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,71.84V184.16a15.92,15.92,0,0,1-24.48,13.34L128,146.86v37.3a15.92,15.92,0,0,1-24.48,13.34L15.33,141.34a15.8,15.8,0,0,1,0-26.68L103.52,58.5A15.91,15.91,0,0,1,128,71.84v37.3L207.52,58.5A15.91,15.91,0,0,1,232,71.84Z"/></svg>
+        <span class="text">
+          <span class="title">Music reviews</span>
+          <span class="desc">rewind.afonsomuralha.com</span>
+        </span>
       </a>
     </nav>
 
