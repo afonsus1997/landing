@@ -54,6 +54,8 @@
       animation: blink 1.1s steps(1) infinite;
     }
 
+    h1.typing::after { animation: none; }
+
     @keyframes blink {
       50% { opacity: 0; }
     }
@@ -247,7 +249,23 @@
       })();
     </script>
 
-    <h1>Afonso Muralha</h1>
+    <h1 aria-label="Afonso Muralha">Afonso Muralha</h1>
+    <script>
+      // Name types itself out after the logo has mostly appeared.
+      (function () {
+        var h = document.querySelector("h1");
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        var text = h.textContent;
+        h.textContent = "";
+        h.classList.add("typing");
+        var i = 0;
+        setTimeout(function type() {
+          h.textContent = text.slice(0, ++i);
+          if (i < text.length) setTimeout(type, 60 + Math.random() * 70);
+          else h.classList.remove("typing");
+        }, 700);
+      })();
+    </script>
 
     <h2>Links</h2>
     <nav class="cards">
