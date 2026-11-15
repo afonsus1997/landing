@@ -39,8 +39,61 @@
       display: block;
       width: 128px;
       height: 128px;
+      flex: none;
       image-rendering: pixelated;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
       margin-bottom: 2rem;
+    }
+
+    /* Speech bubble with bad jokes */
+    .bubble {
+      position: relative;
+      max-width: 18rem;
+      margin-top: 1.25rem;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--muted);
+      background: none;
+      color: var(--fg);
+      font: inherit;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      text-align: left;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .bubble.show { opacity: 1; transform: none; }
+
+    .bubble:focus-visible { outline: 1px solid var(--fg); outline-offset: 2px; }
+
+    /* Tail pointing at the logo: an outline triangle with a fill triangle on top */
+    .bubble::before,
+    .bubble::after {
+      content: "";
+      position: absolute;
+      top: 14px;
+      border-style: solid;
+      border-color: transparent;
+    }
+
+    .bubble::before {
+      left: -9px;
+      border-width: 7px 9px 7px 0;
+      border-right-color: var(--muted);
+    }
+
+    .bubble::after {
+      left: -7px;
+      top: 15px;
+      border-width: 6px 8px 6px 0;
+      border-right-color: var(--bg);
     }
 
     h1 {
@@ -191,61 +244,83 @@
       <span class="radio-track" aria-live="polite"></span>
     </div>
 
-    <img class="logo" src="logo.png" alt="Afonso Muralha" width="64" height="64">
-    <script>
-      // Logo dissolves in, pixel by pixel in random order. Falls back to the
-      // plain image if anything goes wrong or reduced motion is requested.
-      (function () {
-        var img = document.querySelector(".logo");
-        if (!window.requestAnimationFrame ||
-            matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        img.style.visibility = "hidden";
+    <div class="hero">
+      <img class="logo" src="logo.png" alt="Afonso Muralha" width="64" height="64">
+      <script>
+        // Logo dissolves in, pixel by pixel in random order. Falls back to the
+        // plain image if anything goes wrong or reduced motion is requested.
+        (function () {
+          var img = document.querySelector(".logo");
+          if (!window.requestAnimationFrame ||
+              matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          img.style.visibility = "hidden";
 
-        function reveal() { img.style.visibility = ""; }
+          function reveal() { img.style.visibility = ""; }
 
-        function run() {
-          try {
-            var size = img.naturalWidth;
-            var c = document.createElement("canvas");
-            c.width = c.height = size;
-            var ctx = c.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            var data = ctx.getImageData(0, 0, size, size).data;
-            var bg = data.slice(0, 3); // top-left pixel is background
-            var px = [];
-            for (var i = 0; i < size * size; i++) {
-              var o = i * 4;
-              if (data[o] !== bg[0] || data[o + 1] !== bg[1] || data[o + 2] !== bg[2]) {
-                px.push([i % size, (i / size) | 0, "rgb(" + data[o] + "," + data[o + 1] + "," + data[o + 2] + ")"]);
+          function run() {
+            try {
+              var size = img.naturalWidth;
+              var c = document.createElement("canvas");
+              c.width = c.height = size;
+              var ctx = c.getContext("2d");
+              ctx.drawImage(img, 0, 0);
+              var data = ctx.getImageData(0, 0, size, size).data;
+              var bg = data.slice(0, 3); // top-left pixel is background
+              var px = [];
+              for (var i = 0; i < size * size; i++) {
+                var o = i * 4;
+                if (data[o] !== bg[0] || data[o + 1] !== bg[1] || data[o + 2] !== bg[2]) {
+                  px.push([i % size, (i / size) | 0, "rgb(" + data[o] + "," + data[o + 1] + "," + data[o + 2] + ")"]);
+                }
               }
-            }
-            for (var k = px.length - 1; k > 0; k--) {
-              var r = (Math.random() * (k + 1)) | 0, t = px[k]; px[k] = px[r]; px[r] = t;
-            }
-            ctx.clearRect(0, 0, size, size);
-            c.className = img.className;
-            c.setAttribute("role", "img");
-            c.setAttribute("aria-label", img.alt);
-            img.replaceWith(c);
-
-            var DURATION = 900, drawn = 0, start = null;
-            (function frame(now) {
-              if (start === null) start = now;
-              var p = Math.min((now - start) / DURATION, 1);
-              var target = Math.round(px.length * (1 - Math.pow(1 - p, 3)));
-              for (; drawn < target; drawn++) {
-                ctx.fillStyle = px[drawn][2];
-                ctx.fillRect(px[drawn][0], px[drawn][1], 1, 1);
+              for (var k = px.length - 1; k > 0; k--) {
+                var r = (Math.random() * (k + 1)) | 0, t = px[k]; px[k] = px[r]; px[r] = t;
               }
-              if (p < 1) requestAnimationFrame(frame);
-            })(performance.now());
-          } catch (e) {
-            reveal();
+              ctx.clearRect(0, 0, size, size);
+              c.className = img.className;
+              c.setAttribute("role", "img");
+              c.setAttribute("aria-label", img.alt);
+              img.replaceWith(c);
+
+              var DURATION = 900, drawn = 0, start = null;
+              (function frame(now) {
+                if (start === null) start = now;
+                var p = Math.min((now - start) / DURATION, 1);
+                var target = Math.round(px.length * (1 - Math.pow(1 - p, 3)));
+                for (; drawn < target; drawn++) {
+                  ctx.fillStyle = px[drawn][2];
+                  ctx.fillRect(px[drawn][0], px[drawn][1], 1, 1);
+                }
+                if (p < 1) requestAnimationFrame(frame);
+              })(performance.now());
+            } catch (e) {
+              reveal();
+            }
           }
-        }
 
-        if (img.complete && img.naturalWidth) run();
-        else { img.addEventListener("load", run); img.addEventListener("error", reveal); }
+          if (img.complete && img.naturalWidth) run();
+          else { img.addEventListener("load", run); img.addEventListener("error", reveal); }
+        })();
+      </script>
+      <button class="bubble" type="button" title="Another one" aria-live="polite"></button>
+    </div>
+    <script src="jokes.js"></script>
+    <script>
+      // A random bad joke on every load; click the bubble for another.
+      (function () {
+        var b = document.querySelector(".bubble");
+        var jokes = window.JOKES || [];
+        if (!jokes.length) { b.remove(); return; }
+        var last = -1;
+        function next() {
+          var n;
+          do { n = Math.floor(Math.random() * jokes.length); } while (n === last && jokes.length > 1);
+          last = n;
+          b.textContent = jokes[n];
+        }
+        next();
+        b.addEventListener("click", next);
+        setTimeout(function () { b.classList.add("show"); }, 1000);
       })();
     </script>
 
